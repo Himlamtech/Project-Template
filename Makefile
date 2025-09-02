@@ -1,7 +1,7 @@
 PY=uv run python
 UV=uv
 
-.PHONY: setup sync run dev lint format type test hooks hooks-update clean
+.PHONY: setup sync run dev lint format type test hooks hooks-strict hooks-update clean
 
 setup:
 	$(UV) sync
@@ -31,8 +31,13 @@ type:
 test:
 	$(UV) run pytest
 
+# Auto-fix formatting (lenient mode)
 hooks:
 	$(UV) run pre-commit run --all-files
+
+# Strict checking (mypy, bandit, etc.)
+hooks-strict:
+	./scripts/check-strict.sh
 
 hooks-update:
 	$(UV) run pre-commit autoupdate
