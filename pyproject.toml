@@ -1,9 +1,64 @@
 [project]
-name = "template"
+name = "my-ai-project"
 version = "0.1.0"
-description = "Add your description here"
+description = "Hexagonal Python AI template (uv + FastAPI + pre-commit)"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic>=2.6",
+  "httpx>=0.27",
+  "numpy",
+  "pandas",
+  "scikit-learn",
+  "openai>=1.40.0",
+  # "sqlalchemy>=2.0",      # if using relational DB
+  # "psycopg[binary]>=3.2", # if Postgres
+  # "pgvector",             # if pgvector
+  "pydantic-settings>=2.10.1",
+]
+
+[tool.uv]  # (reserved for uv options if needed)
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+fix = true
+show-fixes = true
+
+[tool.ruff.lint]
+extend-select = ["E","F","B","I","UP","SIM"]
+ignore = ["E501"] # handled by black
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+exclude = ["tests/e2e"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = [
+  "tests",
+]
+
+[dependency-groups]
+dev = [
+    "bandit>=1.8.6",
+    "mypy>=1.17.1",
     "pre-commit>=4.3.0",
+    "pytest>=8.4.1",
+    "types-requests>=2.32.4.20250809",
 ]

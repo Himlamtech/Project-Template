@@ -19,13 +19,13 @@ site/
 
 # Python tools
 .mypy_cache/
+.ruff_cache/
 .pytest_cache/
 .tox/
 .nox/
 .hypothesis/
 .pyre/
 .pytype/
-ruff_cache/
 .dmypy.json
 
 # Virtual environments
