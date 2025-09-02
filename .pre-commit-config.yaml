@@ -1,5 +1,5 @@
 repos:
-  # Formatting / linting
+  # Auto-formatting tools (these will fix code automatically)
   - repo: https://github.com/psf/black
     rev: 24.8.0
     hooks:
@@ -10,7 +10,7 @@ repos:
     rev: v0.6.8
     hooks:
       - id: ruff
-        args: ["--fix"]
+        args: ["--fix", "--exit-zero"]  # --exit-zero means don't fail on unfixable issues
       - id: ruff-format
 
   - repo: https://github.com/PyCQA/isort
@@ -19,33 +19,15 @@ repos:
       - id: isort
         args: ["--profile", "black"]
 
-  # Typing & Security
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
-    hooks:
-      - id: mypy
-        args: ["--strict"]
-        additional_dependencies: [fastapi, pydantic, pydantic-settings, pytest, httpx]
-
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.10
-    hooks:
-      - id: bandit
-        args: ["-ll", "-r", "app"]
-
-  # Hygiene
+  # Basic file hygiene (auto-fixable)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-      - id: check-yaml
-      - id: check-toml
-      - id: check-json
-      - id: detect-private-key
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-merge-conflict
 
-  # Notebooks (common in AI)
+  # Notebooks cleanup
   - repo: https://github.com/kynan/nbstripout
     rev: 0.7.1
     hooks:

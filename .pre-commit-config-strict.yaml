@@ -1,0 +1,25 @@
+repos:
+  # Strict type checking and security
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        args: ["--strict"]
+        additional_dependencies: [fastapi, pydantic, pydantic-settings, pytest, httpx]
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.10
+    hooks:
+      - id: bandit
+        args: ["-ll", "-r", "app"]
+
+  # File validation (can fail)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: detect-private-key
+
+default_stages: [pre-commit]
