@@ -60,6 +60,14 @@ Key environment variables:
 - `DATABASE_URL`: Database connection string (if using)
 - `LOG_LEVEL`: Logging level (INFO, DEBUG, etc.)
 
+## Pre-commit
+```pip install pre-commit
+pre-commit install           # gắn hook vào .git/hooks
+pre-commit install --hook-type pre-push
+pre-commit autoupdate        # cập nhật rev -> lưu lại thay đổi
+pre-commit run --all-files   # chạy một vòng toàn repo
+```
+
 ## Architecture
 
 This project follows hexagonal architecture principles:
