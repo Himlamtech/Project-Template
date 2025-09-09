@@ -1,36 +1,82 @@
+minimum_pre_commit_version: "3.5.0"
+
+default_language_version:
+  python: python3.12
+
+default_stages: [commit]
+
+# Chạy theo thứ tự: format -> lint -> hygiene
 repos:
-  # Auto-formatting tools (these will fix code automatically)
-  - repo: https://github.com/psf/black
-    rev: 24.8.0
-    hooks:
-      - id: black
-        language_version: python3.12
-
+  # 1) Format + Lint nhanh, auto-fix
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.8
+    # Pin chặt version (cập nhật định kỳ bằng `pre-commit autoupdate`)
+    rev: v0.5.7
     hooks:
-      - id: ruff
-        args: ["--fix", "--exit-zero"]  # --exit-zero means don't fail on unfixable issues
       - id: ruff-format
+        name: ruff-format (formatter duy nhất)
+        types: [python]
+        exclude: |
+          (^migrations/)|(^data/)|(^build/)|(^dist/)|(^.venv/)|(^venv/)|(^logs/)
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: ["--profile", "black"]
+      - id: ruff
+        name: ruff (lint + --fix)
+        args: ["--fix"]
+        types: [python]
+        exclude: |
+          (^migrations/)|(^data/)|(^build/)|(^dist/)|(^.venv/)|(^venv/)|(^logs/)
 
-  # Basic file hygiene (auto-fixable)
+  # 2) Các hook vệ sinh cơ bản, rẻ – luôn nên bật
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: mixed-line-ending
 
-  # Notebooks cleanup
+  # 3) Bỏ metadata thừa trong notebooks (nếu có)
   - repo: https://github.com/kynan/nbstripout
     rev: 0.7.1
     hooks:
       - id: nbstripout
+        types: [jupyter]
+        stages: [commit]
 
-default_stages: [pre-commit]
+  # 4) Secret scanning (nhẹ), chạy khi push
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        stages: [push]
+        args: ["--baseline", ".secrets.baseline"]
+        exclude: |
+          (^tests?/fixtures/)|(^data/)|(^assets/)
+
+  # 5) Type-check và test – chuyển sang pre-push để tránh ức chế
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.0
+    hooks:
+      - id: mypy
+        name: mypy (pre-push)
+        stages: [push]
+        args: ["--pretty", "--cache-dir=.mypy_cache", "app", "src"]
+        additional_dependencies:
+          - pydantic>=2
+          - types-requests
+        exclude: |
+          (^migrations/)|(^tests?/fixtures/)
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest (quick, pre-push)
+        entry: bash -c "pytest -q"
+        language: system
+        pass_filenames: false
+        stages: [push]
+        types: [python]
+        # Nếu có test chậm, dùng marker: entry: bash -c "pytest -q -m 'not slow'"
+
