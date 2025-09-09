@@ -78,5 +78,4 @@ repos:
         pass_filenames: false
         stages: [push]
         types: [python]
-        # Nếu có test chậm, dùng marker: entry: bash -c "pytest -q -m 'not slow'"
 
