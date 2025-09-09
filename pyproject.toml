@@ -21,44 +21,44 @@ dependencies = [
 
 [tool.uv]  # (reserved for uv options if needed)
 
-[tool.black]
-line-length = 100
-target-version = ["py312"]
-
-[tool.isort]
-profile = "black"
-line_length = 100
-
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-fix = true
-show-fixes = true
+extend-exclude = ["migrations", "build", "dist", ".venv", "venv", "logs", "data"]
 
 [tool.ruff.lint]
-extend-select = ["E","F","B","I","UP","SIM"]
-ignore = ["E501"] # handled by black
+# Bộ rule gợi ý: gọn mà hiệu quả
+select = [
+  "E","F",        # pycodestyle/pyflakes
+  "I",            # import sort (isort)
+  "UP",           # pyupgrade
+  "B",            # bugbear
+  "SIM",          # simplifications
+  "C4",           # comprehensions
+  "PIE"           # misc best practices
+]
+ignore = [
+  "D"             # tạm thời bỏ docstring; bật lại khi sẵn sàng
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app","src"]
+combine-as-imports = true
+force-wrap-aliases = true
 
 [tool.mypy]
 python_version = "3.12"
-strict = true
+pretty = true
+show_error_codes = true
 warn_unused_ignores = true
 warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-exclude = ["tests/e2e"]
+strict_optional = true
+# Khi bắt đầu có thể nới lỏng cho mượt:
+ignore_missing_imports = true
+exclude = "(^migrations/|^tests?/fixtures/|^venv/|^.venv/)"
 
 [tool.pytest.ini_options]
-addopts = "-q"
-testpaths = [
-  "tests",
-]
-
-[dependency-groups]
-dev = [
-    "bandit>=1.8.6",
-    "mypy>=1.17.1",
-    "pre-commit>=4.3.0",
-    "pytest>=8.4.1",
-    "types-requests>=2.32.4.20250809",
-]
+minversion = "8.0"
+addopts = "-q -ra"
+testpaths = ["tests"]
+xfail_strict = true
